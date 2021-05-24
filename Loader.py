@@ -19,17 +19,17 @@ class Loader():
         df_test
         """
         # 데이터 로드
-        file_path=''
+        file_path='/home/ygkim/Neural_CF/data/ml-latest-small'
         df = pd.read_csv(file_path + '/ratings.csv', header=None)
-        df = df.drop(df.columns[2], axis=1)
-        df.columns = ['userId', 'movieId', 'rating', 'timestamp']
+        df = df.drop(df.columns[3], axis=1)
+        df.columns = ['userId', 'movieId', 'rating']
         df = df.dropna()
-        df = df.loc[df.plays != 0]
+        df = df.loc[df.rating != 0]
 
         # user 샘플링
         sample_num = 100000
         unique_user_lst = list(np.unique(df['userId']))  # 358857명
-        sample_user_idx = np.random.choice(len(unique_user_lst), sample_num, replace=False)
+        sample_user_idx = np.random.choice(len(unique_user_lst), sample_num, replace=True)
         sample_user_lst = [unique_user_lst[idx] for idx in sample_user_idx]
         df = df[df['userId'].isin(sample_user_lst)]
         df = df.reset_index(drop=True)
@@ -48,7 +48,7 @@ class Loader():
         movie_lookup['movie_id'] = movie_lookup.movie_id.astype(str)
 
         # train, test 데이터 생성
-        df = df[['user_id', 'movie_id', 'rating', 'timestamp']]
+        df = df[['user_id', 'movie_id', 'rating']]
         df_train, df_test = self.train_test_split(df)
 
         # 전체 user, movie 리스트 생성
@@ -58,7 +58,7 @@ class Loader():
         # train user, movie 리스트 생성
         rows = df_train['user_id'].astype(int)
         cols = df_train['movie_id'].astype(int)
-        values = list(df_train.plays)
+        values = list(df_train.rating)
 
         uids = np.array(rows.tolist())
         mids = np.array(cols.tolist())
@@ -112,7 +112,7 @@ class Loader():
         # user_id와 holdout_movie_id(user가 플레이한 아이템 중 1개)뽑기
         df_test = df_test.groupby(['user_id']).first()
         df_test['user_id'] = df_test.index
-        df_test = df_test[['user_id', 'movie_id', 'rating', 'timestamp']]
+        df_test = df_test[['user_id', 'movie_id', 'rating']]
         df_test = df_test.reset_index(drop=True)
 
         # df_train

@@ -53,13 +53,12 @@ if __name__ == '__main__':
 
     # user 한 명에 대한 prediction 예시
     user_id = 0
-    user_candidate_movie = np.array([134, 6783, 27888, 8362, 25]).reshape(-1, 1)
+    user_candidate_movie = np.array([134, 6783, 2788, 8362, 25]).reshape(-1, 1)
     user_input = np.full(len(user_candidate_movie), user_id, dtype='int32').reshape(-1, 1)
-
     predictions = model.predict([user_input, user_candidate_movie])
     predictions = predictions.flatten().tolist()
     movie_to_pre_score = {movie[0]: pre for movie, pre in zip(user_candidate_movie, predictions)}  # 후보 아이템 별 예측값
-    movie_to_pre_score = dict(sorted(movie_to_pre_score.movies(), key=lambda x: x[1], reverse=True))
+    movie_to_pre_score = dict(sorted(movie_to_pre_score.items(), key=lambda x: x[1], reverse=True))
 
     recommend_movie_lst = list(movie_to_pre_score.keys())
     print('recommend:', recommend_movie_lst)
