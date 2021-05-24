@@ -14,7 +14,7 @@ class Loader():
         uids: train user
         iids: train item
         users: 전체 user
-        items: 전체 item
+        movies: 전체 movie
         df_train
         df_test
         """
@@ -53,7 +53,7 @@ class Loader():
 
         # 전체 user, item 리스트 생성
         users = list(np.sort(df.user_id.unique()))
-        items = list(np.sort(df.movie_id.unique()))
+        movies = list(np.sort(df.movie_id.unique()))
 
         # train user, item 리스트 생성
         rows = df_train['user_id'].astype(int)
@@ -64,11 +64,11 @@ class Loader():
         iids = np.array(cols.tolist())
 
         # 각 user 마다 negative item 생성
-        df_neg = self.get_negatives(uids, iids, items, df_test)
+        df_neg = self.get_negatives(uids, iids, movies, df_test)
 
-        return uids, iids, df_train, df_test, df_neg, users, items, item_lookup
+        return uids, iids, df_train, df_test, df_neg, users, movies, item_lookup
 
-    def get_negatives(self, uids, iids, items, df_test):
+    def get_negatives(self, uids, iids, movies, df_test):
         """
         negative item 리스트 생성함수
         """
@@ -84,9 +84,9 @@ class Loader():
             negatives = []
             negatives.append((u, i))
             for t in range(100):
-                j = np.random.randint(len(items))     # neg_item j 1개 샘플링
+                j = np.random.randint(len(movies))     # neg_item j 1개 샘플링
                 while (u, j) in zipped:               # j가 train에 있으면 다시뽑고, 없으면 선택
-                    j = np.random.randint(len(items))
+                    j = np.random.randint(len(movies))
                 negatives.append(j)
             negativeList.append(negatives) # [(0,pos), neg, neg, ...]
 
@@ -122,7 +122,7 @@ class Loader():
 
         return df_train, df_test
 
-    def get_train_instances(self, uids, iids, num_neg, num_items):
+    def get_train_instances(self, uids, iids, num_neg, num_movies):
         """
         모델에 사용할 train 데이터 생성 함수
         """
@@ -139,9 +139,9 @@ class Loader():
             # neg item 추가
             for t in range(num_neg):
 
-                j = np.random.randint(num_items)      # neg_item j num_neg 개 샘플링
+                j = np.random.randint(num_movies)      # neg_item j num_neg 개 샘플링
                 while (u, j) in zipped:               # u가 j를 이미 선택했다면
-                    j = np.random.randint(num_items)  # 다시 샘플링
+                    j = np.random.randint(num_movies)  # 다시 샘플링
 
                 user_input.append(u)  # [u1, u1,  u1,  ...]
                 movie_input.append(j)  # [pos_i, neg_j1, neg_j2, ...]
