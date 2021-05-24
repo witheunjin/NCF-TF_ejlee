@@ -12,7 +12,7 @@ class Loader():
         데이터 로드 함수
 
         uids: train user
-        iids: train item
+        mids: train movie
         users: 전체 user
         movies: 전체 movie
         df_train
@@ -39,52 +39,52 @@ class Loader():
         df['count'] = df.groupby('userId')['userId'].transform('count')
         df = df[df['count'] > 1]
 
-        # user, item 아이디 부여
+        # user, movie 아이디 부여
         df['user_id'] = df['userId'].astype("category").cat.codes
         df['movie_id'] = df['movieId'].astype("category").cat.codes
 
         # lookup 테이블 생성
-        item_lookup = df[['movie_id', 'movieId']].drop_duplicates()
-        item_lookup['movie_id'] = item_lookup.movie_id.astype(str)
+        movie_lookup = df[['movie_id', 'movieId']].drop_duplicates()
+        movie_lookup['movie_id'] = movie_lookup.movie_id.astype(str)
 
         # train, test 데이터 생성
         df = df[['user_id', 'movie_id', 'rating', 'timestamp']]
         df_train, df_test = self.train_test_split(df)
 
-        # 전체 user, item 리스트 생성
+        # 전체 user, movie 리스트 생성
         users = list(np.sort(df.user_id.unique()))
         movies = list(np.sort(df.movie_id.unique()))
 
-        # train user, item 리스트 생성
+        # train user, movie 리스트 생성
         rows = df_train['user_id'].astype(int)
         cols = df_train['movie_id'].astype(int)
         values = list(df_train.plays)
 
         uids = np.array(rows.tolist())
-        iids = np.array(cols.tolist())
+        mids = np.array(cols.tolist())
 
-        # 각 user 마다 negative item 생성
-        df_neg = self.get_negatives(uids, iids, movies, df_test)
+        # 각 user 마다 negative movie 생성
+        df_neg = self.get_negatives(uids, mids, movies, df_test)
 
-        return uids, iids, df_train, df_test, df_neg, users, movies, item_lookup
+        return uids, mids, df_train, df_test, df_neg, users, movies, movie_lookup
 
-    def get_negatives(self, uids, iids, movies, df_test):
+    def get_negatives(self, uids, mids, movies, df_test):
         """
-        negative item 리스트 생성함수
+        negative movie 리스트 생성함수
         """
         negativeList = []
         test_u = df_test['user_id'].values.tolist()
         test_i = df_test['movie_id'].values.tolist()
 
-        test_ratings = list(zip(test_u, test_i))  # test (user, item)세트
-        zipped = set(zip(uids, iids))             # train (user, item)세트
+        test_ratings = list(zip(test_u, test_i))  # test (user, movie)세트
+        zipped = set(zip(uids, mids))             # train (user, movie)세트
 
         for (u, i) in test_ratings:
 
             negatives = []
             negatives.append((u, i))
             for t in range(100):
-                j = np.random.randint(len(movies))     # neg_item j 1개 샘플링
+                j = np.random.randint(len(movies))     # neg_movie j 1개 샘플링
                 while (u, j) in zipped:               # j가 train에 있으면 다시뽑고, 없으면 선택
                     j = np.random.randint(len(movies))
                 negatives.append(j)
@@ -122,24 +122,24 @@ class Loader():
 
         return df_train, df_test
 
-    def get_train_instances(self, uids, iids, num_neg, num_movies):
+    def get_train_instances(self, uids, mids, num_neg, num_movies):
         """
         모델에 사용할 train 데이터 생성 함수
         """
         user_input, movie_input, labels = [],[],[]
-        zipped = set(zip(uids, iids)) # train (user, item) 세트
+        zipped = set(zip(uids, mids)) # train (user, movie) 세트
 
-        for (u, i) in zip(uids, iids):
+        for (u, i) in zip(uids, mids):
 
-            # pos item 추가
+            # pos movie 추가
             user_input.append(u)  # [u]
             movie_input.append(i)  # [pos_i]
             labels.append(1)      # [1]
 
-            # neg item 추가
+            # neg movie 추가
             for t in range(num_neg):
 
-                j = np.random.randint(num_movies)      # neg_item j num_neg 개 샘플링
+                j = np.random.randint(num_movies)      # neg_movie j num_neg 개 샘플링
                 while (u, j) in zipped:               # u가 j를 이미 선택했다면
                     j = np.random.randint(num_movies)  # 다시 샘플링
 
