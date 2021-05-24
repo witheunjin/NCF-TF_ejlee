@@ -4,20 +4,20 @@ from tensorflow.keras.models import Model
 
 class MLP:
 
-    def __init__(self, user_num, item_num):
+    def __init__(self, user_num, movie_num):
 
         # User embedding
         user = Input(shape=(1,), dtype='int32')
         user_embedding = Embedding(user_num, 32, input_length=user.shape[1])(user)
         user_embedding = Flatten()(user_embedding)
 
-        # Item embedding
-        item = Input(shape=(1,), dtype='int32')
-        item_embedding = Embedding(item_num, 32, input_length=item.shape[1])(item)
-        item_embedding = Flatten()(item_embedding)
+        # movie embedding
+        movie = Input(shape=(1,), dtype='int32')
+        movie_embedding = Embedding(movie_num, 32, input_length=movie.shape[1])(movie)
+        movie_embedding = Flatten()(movie_embedding)
 
         # Merge
-        concatenated = Concatenate()([user_embedding, item_embedding])
+        concatenated = Concatenate()([user_embedding, movie_embedding])
         dropout = Dropout(rate=0.2)(concatenated)
 
         # Layer1
@@ -40,7 +40,7 @@ class MLP:
         output_layer = Dense(1, kernel_initializer='lecun_uniform', name='output_layer')(layer_4)  # (1,1) / h(8,1)초기화
 
         # Model
-        self.model = Model([user, item], output_layer)
+        self.model = Model([user, movie], output_layer)
         self.model.compile(optimizer='adam', loss='binary_crossentropy')
 
     def get_model(self):
