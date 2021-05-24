@@ -4,35 +4,35 @@ from tensorflow.keras.models import Model
 
 class NeuMF:
 
-    def __init__(self, user_num, item_num):
+    def __init__(self, user_num, movie_num):
 
         latent_features = 8
 
         # Input
         user = Input(shape=(1,), dtype='int32')
-        item = Input(shape=(1,), dtype='int32')
+        movie = Input(shape=(1,), dtype='int32')
 
         # User embedding for GMF
         gmf_user_embedding = Embedding(user_num, latent_features, input_length=user.shape[1])(user)
         gmf_user_embedding = Flatten()(gmf_user_embedding)
 
-        # Item embedding for GMF
-        gmf_item_embedding = Embedding(item_num, latent_features, input_length=item.shape[1])(item)
-        gmf_item_embedding = Flatten()(gmf_item_embedding)
+        # movie embedding for GMF
+        gmf_movie_embedding = Embedding(movie_num, latent_features, input_length=movie.shape[1])(movie)
+        gmf_movie_embedding = Flatten()(gmf_movie_embedding)
 
         # User embedding for MLP
         mlp_user_embedding = Embedding(user_num, 32, input_length=user.shape[1])(user)
         mlp_user_embedding = Flatten()(mlp_user_embedding)
 
-        # Item embedding for MLP
-        mlp_item_embedding = Embedding(item_num, 32, input_length=item.shape[1])(item)
-        mlp_item_embedding = Flatten()(mlp_item_embedding)
+        # movie embedding for MLP
+        mlp_movie_embedding = Embedding(movie_num, 32, input_length=movie.shape[1])(movie)
+        mlp_movie_embedding = Flatten()(mlp_movie_embedding)
 
         # GMF layers
-        gmf_mul =  Multiply()([gmf_user_embedding, gmf_item_embedding])
+        gmf_mul =  Multiply()([gmf_user_embedding, gmf_movie_embedding])
 
         # MLP layers
-        mlp_concat = Concatenate()([mlp_user_embedding, mlp_item_embedding])
+        mlp_concat = Concatenate()([mlp_user_embedding, mlp_movie_embedding])
         mlp_dropout = Dropout(0.2)(mlp_concat)
 
         # Layer1
@@ -58,7 +58,7 @@ class NeuMF:
         output_layer = Dense(1, kernel_initializer='lecun_uniform', name='output_layer')(merged_vector) # 1,1 / h(8,1)초기화
 
         # Model
-        self.model = Model([user, item], output_layer)
+        self.model = Model([user, movie], output_layer)
         self.model.compile(optimizer= 'adam', loss= 'binary_crossentropy')
 
     def get_model(self):
