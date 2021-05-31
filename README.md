@@ -1,36 +1,46 @@
-# Neural_CF
+# Neural_CF_ejlee
 
-본 레파지토리는 neural collaborative filtering 모델을 tensorflow 2.0 버전으로 구현한 것입니다. Victor의 [블로그](https://medium.com/@victorkohler/collaborative-filtering-using-deep-neural-networks-in-tensorflow-96e5d41a39a1)를 참고하였으며, 해당 블로그는 tensorflow 1 버전으로 구현되어 있습니다.
+* NCF-TF_ejlee (Neural Collaborative Filtering Model with TensorFlow)
 
+* Reference: https://github.com/LeeHyeJin91/Neural_CF
 
-### 파일 설명 
+* My Repository URL: https://github.com/witheunjin/NCF-TF_ejlee
 
-* data/EDA.ipynb : 데이터 EDA 
-* Loader.py      : 데이터 로드 및 전처리 클래스 
-* Metric.py      : top@K 메트릭 계산 클래스
-* model/GMF.py   : generalized matrix factorization 모델 
-* model/MLP.py   : multi-layer perceptron 모델 
-* model/NeuMF.py : neural collaborative filtering 모델
-
-
-### 데이터
-
-* usersha1-artmbid-artname-plays.tsv : lastfm의 음악 스트리밍 데이터  
-* 출처: http://ocelma.net/MusicRecommendationDataset/lastfm-360K.html
-
-
-### 코드 실행 예시
+## [DATASETS]
 ```
-python Run.py
-```
+|__ path: ~/NCF-TF_ejlee/data
+      |__ /100K/ratings.csv: 100K 개의 Ratings data
+      |__ /1M/ratings.csv: 1M 개의 Ratings data
+      |__ /20M/ratings.csv: 20M 개의 Ratings data (Github에는 용량문제로 인해 미포함)
+      |__ /25M/ratings.csv: 25M 개의 Ratings data (Github에는 용량문제로 인해 미포함)
+      |__ /27M/ratings.csv: 27M 개의 Ratings data (Github에는 용량문제로 인해 미포함)
+```     
 
+## [HOW TO USE: 1. Dataset 조회(Dataset Lookup)]
+`~/NCF-TF_ejlee$ python Run.py --help` 명령어를 통해 아래와 같은 Training에 사용할 수 있는 Dataset의 종류와 상세정보를 출력하여 확인할 수 있다.
+(You can look up specifications of datasets that you can use when training this model by using `python Run.py --help` command)
 
-### reference
-* https://arxiv.org/pdf/1708.05031.pdf?source=post_page
-* https://medium.com/@victorkohler/collaborative-filtering-using-deep-neural-networks-in-tensorflow-96e5d41a39a1
+`~/NCF-TF_ejlee$ python Run.py --help`
+**RESULT**
+>usage: Run.py [-h] [--data_size DATA_SIZE]
+>
+>Run NCF.
+>
+>optional arguments:
+>  -h, --help            show this help message and exit
+>  --data_size DATA_SIZE
+>                        Data Size(ex.NAME(Ratings|Movies|Users))
+>                        |__100K(100,000|9,000|600)
+>                        |__1M(1,000,000|4,000|6,000)
+>                        |__20M(20,000,000|27,000|138,000)
+>                        |__25M(25,000,000|62,000|162,000)
+>                        |__27M(27,000,000|58,000|280,000)
 
+## [HOW TO USE: 2. 실행방법(How to execute)]
+~/NCF-TF_ejlee에서 다음과 같은 명령어를 사용하여 실행
+* `$python Run.py --data_size ###` : ###부분에 원하는 데이터크기값(100K, 1M, 20M, 25M, 27M 택 1)을 넣어준 후 실행(ex. `python Run.py --data_size 100K`)
 
+## [RESULTS]
+* NCF-TF_ejlee_100K_result: 100K Dataset에 대한 Training 결과(Epoch 20)
+* NCF-TF_ejlee_1M_result: 1M Dataset에 대한 Training 결과(Epoch 20)
 
-### update
-
-* Last Update Date: 2020/8/12
