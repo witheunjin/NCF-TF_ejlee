@@ -3,6 +3,7 @@ from sklearn.utils import shuffle
 from Loader import Loader
 from Metric import Metric
 from model.NeuMF import NeuMF
+from Parser import parse_args
 
 class Run:
 
@@ -43,14 +44,19 @@ class Run:
         return hit
 
 if __name__ == '__main__':
+    
+    args = parse_args()
+    datasize = args.data_size
+    print("PARSE-DATASIZE: {}".format(datasize))
 
     ncf = Run()
     model = ncf.run()
-
+    print('Training is ended successfully')
+    '''
     # top-k metric
     top_k_metric = ncf.calculate_top_k_metric()
     print('metric:', top_k_metric)
-
+    
     # user 한 명에 대한 prediction 예시
     user_id = 0
     user_candidate_movie = np.array([134, 6783, 2788, 8362, 25]).reshape(-1, 1)
@@ -62,3 +68,4 @@ if __name__ == '__main__':
 
     recommend_movie_lst = list(movie_to_pre_score.keys())
     print('recommend:', recommend_movie_lst)
+    '''

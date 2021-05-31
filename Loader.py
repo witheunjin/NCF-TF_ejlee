@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
+from Parser import parse_args
 
 class Loader():
 
@@ -18,8 +19,11 @@ class Loader():
         df_train
         df_test
         """
+        
         # 데이터 로드
-        file_path='/home/ygkim/Neural_CF/data/ml-latest-small'
+        args = parse_args()
+        data_size = args.data_size
+        file_path='/home/ygkim/NCF-TF_ejlee/data/'+data_size
         df = pd.read_csv(file_path + '/ratings.csv', header=None)
         df = df.drop(df.columns[3], axis=1)
         df.columns = ['userId', 'movieId', 'rating']
