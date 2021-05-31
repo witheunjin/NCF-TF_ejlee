@@ -22,19 +22,21 @@
 
 `~/NCF-TF_ejlee$ python Run.py --help`
 **RESULT**
->usage: Run.py [-h] [--data_size DATA_SIZE]
->
->Run NCF.
->
->optional arguments:
->  -h, --help            show this help message and exit
->  --data_size DATA_SIZE
->                        Data Size(ex.NAME(Ratings|Movies|Users))
->                        |__100K(100,000|9,000|600)
->                        |__1M(1,000,000|4,000|6,000)
->                        |__20M(20,000,000|27,000|138,000)
->                        |__25M(25,000,000|62,000|162,000)
->                        |__27M(27,000,000|58,000|280,000)
+```
+usage: Run.py [-h] [--data_size DATA_SIZE]
+
+Run NCF.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --data_size DATA_SIZE
+                       Data Size(ex.NAME(Ratings|Movies|Users))
+                        |__100K(100,000|9,000|600)
+                        |__1M(1,000,000|4,000|6,000)
+                        |__20M(20,000,000|27,000|138,000)
+                        |__25M(25,000,000|62,000|162,000)
+                        |__27M(27,000,000|58,000|280,000)
+```
 
 ## [HOW TO USE: 2. 실행방법(How to execute)]
 ~/NCF-TF_ejlee에서 다음과 같은 명령어를 사용하여 실행
